@@ -16,7 +16,7 @@ public class CustomerController {
     @Autowired
     private ICustomerService customerService;
 
-    @GetMapping("")
+    @GetMapping("/")
     public ResponseEntity<List<Customer>> findAll() {
         return new ResponseEntity<>(customerService.findAll(), HttpStatus.OK);
     }
@@ -33,6 +33,16 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Customer updatedCustomer) {
+        Customer existingCustomer = customerService.findOne(id);
+        if (existingCustomer == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        updatedCustomer.setId(id);
+        customerService.save(updatedCustomer);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
     @DeleteMapping("/{id}")
     private ResponseEntity<?> delete(@PathVariable Long id) {
         customerService.deleteById(id);
